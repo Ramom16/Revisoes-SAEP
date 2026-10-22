@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AgendamentoForm from "../components/AgendamentoForm.jsx";
 
 const veiculosMockados = [
@@ -40,6 +40,30 @@ const agendamentosMockados = [
 export default function AgendamentosPage() {
     const [agendamentos, setAgendamentos] = useState(agendamentosMockados);
     const [veiculos, setVeiculos] = useState(veiculosMockados);
+
+    const [ordenacao, setOrdenacao] = useState('dia');
+
+    const handleMudarOrdenacao = (novaOrdenacao) =>{
+        setOrdenacao(novaOrdenacao);
+    }
+
+    useEffect(()=>{
+        const agendamentosOrdenados = [...agendamentos];
+
+        if (ordenacao == 'dia'){
+            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento) - new Date(b.dataAgendamento));
+        }
+
+        if (ordenacao == 'mes'){
+            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento).getMonth() - new Date(b.dataAgendamento).getMonth());
+        }
+
+        if (ordenacao == 'ano'){
+            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento).getFullYear() - new Date(b.dataAgendamento).getFullYear());
+        }
+
+        setAgendamentos(agendamentosOrdenados);
+    }, [ordenacao]);
     
     const handleSalvar = (dadosAgendamento) => {
         const novoAgendamento = {
@@ -47,6 +71,21 @@ export default function AgendamentosPage() {
             id: crypto.randomUUID
         }
         setAgendamentos(agendamentos => [...agendamentos, novoAgendamento])
+    }
+
+    const [agendamentoForm, setAgendamentoForm] = useState(null);
+    const handleSalvarNovaData = (novaData) => {
+        setAgendamentos(agendamentos.map(
+            agendamento =>{
+                if (agendamento.id == agendamentoForm.id) {
+                    return {...agendamento, dataAgendamento: novaData}
+                }
+
+                return agendamento;
+            }
+        ))
+
+        setAgendamentoForm(null);
     }
 
     return(
@@ -57,6 +96,11 @@ export default function AgendamentosPage() {
                         onSalvar={handleSalvar}
                         veiculos={veiculos}
                     />
+
+                    <span>Critério de Ordenação:</span>
+                    <button onClick={()=> handleMudarOrdenacao('dia')}>Por dia</button>
+                    <button onClick={()=> handleMudarOrdenacao('mes')}>Por Mês</button>
+                    <button onClick={()=> handleMudarOrdenacao('ano')}>Por Ano</button>
         
                     <table>
                         <thead>
