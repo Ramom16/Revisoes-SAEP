@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import AgendamentoForm from "../components/AgendamentoForm.jsx";
+import AgendamentoForm from "../components/AgendamentoForm";
+import AlterarDataForm from "../components/AlterarDataForm";
 
 const veiculosMockados = [
     {
@@ -9,10 +10,10 @@ const veiculosMockados = [
         marca: "Fiat",
         ano: 2008,
         clienteId: 1
-        },
+    },
     {
         id: 2,
-        placa: "DEF-5678",
+        placa: "XYZ-4321",
         modelo: "Civic",
         marca: "Honda",
         ano: 2011,
@@ -31,54 +32,56 @@ const agendamentosMockados = [
     {
         id: 2,
         veiculoId: 2,
-        dataAgendamento: "2026-11-01T14:30:00",
-        descricaoServico: "Revisão completa",
+        dataAgendamento: "2026-10-31T14:30:00",
+        descricaoServico: "Alinhamento e balanceamento",
         status: "Agendado"
     }
 ]
 
-export default function AgendamentosPage() {
+export default function AgendamentoPage() {
     const [agendamentos, setAgendamentos] = useState(agendamentosMockados);
     const [veiculos, setVeiculos] = useState(veiculosMockados);
 
     const [ordenacao, setOrdenacao] = useState('dia');
 
-    const handleMudarOrdenacao = (novaOrdenacao) =>{
+    const handleMudarOrdenacao = (novaOrdenacao) => {
         setOrdenacao(novaOrdenacao);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
+
         const agendamentosOrdenados = [...agendamentos];
 
-        if (ordenacao == 'dia'){
-            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento) - new Date(b.dataAgendamento));
+        if (ordenacao == 'dia') {
+            agendamentosOrdenados.sort((a, b) => new Date(a.dataAgendamento) - new Date(b.dataAgendamento));
         }
 
-        if (ordenacao == 'mes'){
-            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento).getMonth() - new Date(b.dataAgendamento).getMonth());
+        if (ordenacao == 'mes') {
+            agendamentosOrdenados.sort((a, b) => new Date(a.dataAgendamento).getMonth() - new Date(b.dataAgendamento).getMonth());
         }
 
-        if (ordenacao == 'ano'){
-            agendamentosOrdenados.sort((a,b)=> new Date(a.dataAgendamento).getFullYear() - new Date(b.dataAgendamento).getFullYear());
+        if (ordenacao == 'ano') {
+            agendamentosOrdenados.sort((a, b) => new Date(a.dataAgendamento).getFullYear() - new Date(b.dataAgendamento).getFullYear());
         }
 
         setAgendamentos(agendamentosOrdenados);
     }, [ordenacao]);
-    
+
     const handleSalvar = (dadosAgendamento) => {
         const novoAgendamento = {
             ...dadosAgendamento,
             id: crypto.randomUUID
         }
-        setAgendamentos(agendamentos => [...agendamentos, novoAgendamento])
+
+        setAgendamentos(agendamentos => [...agendamentos, novoAgendamento]);
     }
 
     const [agendamentoForm, setAgendamentoForm] = useState(null);
     const handleSalvarNovaData = (novaData) => {
-        setAgendamentos(agendamentos.map(
-            agendamento =>{
+        setAgendamentoForm(agendamentos.map(
+            agendamento => {
                 if (agendamento.id == agendamentoForm.id) {
-                    return {...agendamento, dataAgendamento: novaData}
+                    return { ...agendamento, dataAgendamento: novaData }
                 }
 
                 return agendamento;
@@ -88,59 +91,66 @@ export default function AgendamentosPage() {
         setAgendamentoForm(null);
     }
 
-    return(
+    return (
         <div>
-                    <h3>Gerenciamento de Agendamentos</h3>
-        
-                    <AgendamentoForm
-                        onSalvar={handleSalvar}
-                        veiculos={veiculos}
-                    />
+            <h3>Gerenciamento de Agendamentos</h3>
 
-                    <span>Critério de Ordenação:</span>
-                    <button onClick={()=> handleMudarOrdenacao('dia')}>Por dia</button>
-                    <button onClick={()=> handleMudarOrdenacao('mes')}>Por Mês</button>
-                    <button onClick={()=> handleMudarOrdenacao('ano')}>Por Ano</button>
-        
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data e horário</th>
-                                <th>Serviço</th>
-                                <th>Veículo</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                agendamentos.map(
-                                 agendamentos => (
-                                    <tr key={agendamentos.id}>
-                                        <td>
-                                        {new Date(agendamentos.dataAgendamento).toLocaleDateString('pt-BR')}
-                                        {new Date(agendamentos.dataAgendamento).toLocaleTimeString('pt-BR')}
-                                        </td>
+            <AgendamentoForm
+                onSalvar={handleSalvar}
+                veiculos={veiculos}
+            />
 
-                                        <td>{agendamentos.descricaoServico}</td>
+            <span>Critério de Ordenação:</span>
+            <button onClick={() => handleMudarOrdenacao('dia')}>Por Dia</button>
+            <button onClick={() => handleMudarOrdenacao('mes')}>Por Mês</button>
+            <button onClick={() => handleMudarOrdenacao('ano')}>Por Ano</button>
 
-                                        <td>
-                                            {
-                                                veiculos.map(
-                                                    veiculos => veiculos.id == agendamentos.veiculoId && `${veiculos.modelo} ${veiculos.ano}`
-                                                )
-                                            }
-                                        </td>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data e Horário</th>
+                        <th>Serviço</th>
+                        <th>Veículo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        agendamentos.map(
+                            agendamento => (
+                                <tr key={agendamento.id}>
+                                    <td>
+                                        {new Date(agendamento.dataAgendamento).toLocaleDateString('pt-BR')} |
+                                        {new Date(agendamento.dataAgendamento).toLocaleTimeString('pt-BR')}
+                                    </td>
 
-                                        <td>
-                                            <button>
-                                                Alterar Data
-                                            </button>
-                                        </td>
-                                    </tr>
-                                )
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                    <td>{agendamento.descricaoServico}</td>
+
+                                    <td>{
+                                        veiculos.map(
+                                            veiculo => veiculo.id == agendamento.veiculoId && `${veiculo.modelo} ${veiculo.ano}`
+                                        )
+                                    }</td>
+
+                                    <td>
+                                        <button onClick={()=> setAgendamentoForm(agendamento)}>
+                                            Alterar Data
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        )
+                    }
+                </tbody>
+            </table>
+
+            <AlterarDataForm
+                isOpen={!!agendamentoForm}
+                agendamento={agendamentoForm}
+                onSalvar={handleSalvarNovaData}
+                onFechar={() => setAgendamentoForm(null)}
+            />
+        </div>
     )
+
 }

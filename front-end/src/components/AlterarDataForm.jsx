@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 
-export default function AlterarDataForm({isOpen, agendamento, onSalvar, onFechar}){
+export default function AlterarDataForm({ isOpen, agendamento, onSalvar, onFechar }) {
     const [novaData, setNovaData] = useState('');
 
-    useEffect(()=>{
-        if (agendamento && agendamento.dataAgendamento){
+    useEffect(() => {
+        if (agendamento && agendamento.dataAgendamento) {
             setNovaData(agendamento.dataAgendamento);
         } else {
             setNovaData('');
         }
+
     }, [agendamento]);
 
-    const handleSubmit = (e)=>{
+    if (!isOpen || !agendamento) return null;
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        if(!novaData) return;
+        if (!novaData) return;
         onSalvar(novaData);
     }
 
@@ -23,9 +26,9 @@ export default function AlterarDataForm({isOpen, agendamento, onSalvar, onFechar
 
             <form>
                 <label>Nova data e horário</label>
-                <input type="datetime-local" value={novaData} onChange={(e) => setNovaData(e.target.value)} required/>
+                <input type="datetime-local" value={novaData} onChange={(e) => setNovaData(e.target.value)} required />
 
-                <button onClick={onfechar}></button>
+                <button onClick={onFechar}>Cancelar</button>
                 <button onClick={handleSubmit}>Salvar Nova Data</button>
             </form>
         </div>
