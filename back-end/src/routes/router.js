@@ -19,5 +19,6 @@ router.get('/veiculos', (req, res) => VeiculoController.listar(req,res));
 
 // Rotas para agendamentos
 router.get('/agendamentos', (req, res) => AgendamentoController.listar(req, res));
+router.post('/agendamentos/criar', (req, res) => AgendamentoController.criar(req, res));
 
 export default router; 

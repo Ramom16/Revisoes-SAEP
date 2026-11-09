@@ -45,8 +45,22 @@ class AgendamentoController {
   }
 
   async criar(req, res) {
+    const {data_horario, descricao_servico, veiculo_id, status} = req.body;
+
+    if (!data_horario || !descricao_servico || !veiculo_id){
+      return res.status(400).json({message: 'Todos os dados são obrigatórios'});
+    }
     try {
-      
+      const [result] = await pool.query(
+        `insert into agendamentos (data_horario, descricao_servico, veiculo_id, status)
+        VALUES (?,?,?,?);`,
+         [data_horario, descricao_servico, parseInt(veiculo_id, 10), status || 'Agendado']
+      );
+
+      return res.status(201).json({
+        message: 'Agendamento cadastrado com sucesso',
+        id: result.insertId
+      })
     } catch (error) {
       console.error(error);
       res.status(500).json(
