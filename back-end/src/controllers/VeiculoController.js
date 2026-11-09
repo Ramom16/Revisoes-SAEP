@@ -5,12 +5,13 @@ export class VeiculoController {
     try {
       const [rows] = await pool.query(
         `SELECT
-	    v.id, v.modelo, v.marca, v.cliente_id, c.nome AS NomeCliente
+	    v.*, c.nome AS NomeCliente
     FROM veiculos v
     JOIN clientes c
 	    ON v.cliente_id = c.id
     ORDER BY v.id DESC;`,
       );
+      return res.json(rows);
     } catch (error) {
       console.error("Erro ao listar veículos: ", error);
       return res.status(500).json({

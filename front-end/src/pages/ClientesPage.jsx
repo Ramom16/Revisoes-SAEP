@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ClienteForm from "../components/ClienteForm";
 
+/** 
+ * 
 const clientesMockados = [
     {
         id: 1,
@@ -17,66 +19,104 @@ const clientesMockados = [
         email: 'reizinho@gmail.com'
     }
 ];
+*/
 
 export default function ClientePage() {
-    const [clientes, setClientes] = useState(clientesMockados);
-    const [clienteEditando, setClienteEditando] = useState(null);
+  const [clientes, setClientes] = useState([]);
+  const [clienteEditando, setClienteEditando] = useState(null);
 
-    const handleCancelarEdicao = () => {
-        
-        setClienteEditando(null);
+  const handleCancelarEdicao = () => {
+    setClienteEditando(null);
+  };
+
+  const handleSalvar = async (dadosClientes) => {
+    if (clienteEditando) {
+      setClientes((clientes) =>
+        clientes.map((cliente) =>
+          cliente.id == clienteEditando.id
+            ? { ...dadosClientes, id: clienteEditando.id }
+            : cliente,
+        ),
+      );
+    } else {
+      try {
+        const resposta = await fetch("http://localhost:3001/api/clientes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dadosClientes),
+        });
+
+        const data = await resposta.json();
+
+        const novoCliente = {
+          ...dadosClientes,
+          id: data.id,
+        };
+
+        setClientes((clientes) => [...clientes, novoCliente]);
+      } catch (error) {
+        console.error("Erro ao criar cliente:", error);
+      }
     }
+  };
 
-    const handleSalvar = (dadosClientes) => {
-        if (clienteEditando) {
-            setClientes(clientes => clientes.map(cliente => cliente.id == clienteEditando.id ? { ...dadosClientes, id: clienteEditando.id } : cliente))
-        } else {
-            const novoCliente = {
-                ...dadosClientes,
-                id: Date.now(),
-            };
+  useEffect(() => {
+    const buscarClientes = async () => {
+      try {
+        const resposta = await fetch("http://localhost:3001/api/clientes");
 
-            setClientes(clientes => [...clientes, novoCliente]);
-        }
-    }
+        const data = await resposta.json();
 
-    return (
-        <div>
-            <h3>Gerenciamento de Clientes</h3>
+        setClientes(data);
+      } catch (error) {
+        console.error(`Erro ao buscar clientes:`, error);
+      }
+    };
+    buscarClientes();
+  });
 
-            <ClienteForm
-                onSalvar={handleSalvar}
-                clienteEditando={clienteEditando}
-                onCancelar={handleCancelarEdicao}
-            />
+  return (
+    <div>
+      <h3>Gerenciamento de Clientes</h3>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome do Cliente</th>
-                        <th>CPF</th>
-                        <th>Telefone</th>
-                        <th>E-mail</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {clientes.map(
-                        cliente => (
-                            <tr key={cliente.id}>
-                                <td>{cliente.nome}</td>
-                                <td>{cliente.cpf}</td>
-                                <td>{cliente.telefone}</td>
-                                <td>{cliente.email}</td>
-                                <td>
-                                    <button onClick={() => { setClienteEditando(cliente) }} >Editar</button>
-                                </td>
+      <ClienteForm
+        onSalvar={handleSalvar}
+        clienteEditando={clienteEditando}
+        onCancelar={handleCancelarEdicao}
+      />
 
-                            </tr>
-                        )
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
+      <table>
+        <thead>
+          <tr>
+            <th>Nome do Cliente</th>
+            <th>CPF</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientes.map((cliente) => (
+            <tr key={cliente.id}>
+              <td>{cliente.nome}</td>
+              <td>{cliente.cpf}</td>
+              <td>{cliente.telefone}</td>
+              <td>{cliente.email}</td>
+              <td>
+                <button
+                  onClick={() => {
+                    setClienteEditando(cliente);
+                  }}
+                >
+                  Editar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }

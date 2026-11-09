@@ -55,6 +55,9 @@ export class ClienteController{
             )
         }
     }
+    async editar (req, res) {
+        
+    }
 }
 
 export default new ClienteController();
