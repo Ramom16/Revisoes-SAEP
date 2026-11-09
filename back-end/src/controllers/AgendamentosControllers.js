@@ -1,4 +1,4 @@
-import pool from "../configs/database.js";
+import pool from "../config/database.js";
 import cryptoService from "../utils/crypto.js";
 
 class AgendamentoController {
@@ -41,6 +41,20 @@ class AgendamentoController {
           error: "Erro ao buscar cliente:",
           errorMessage: error.message,
         });
+    }
+  }
+
+  async criar(req, res) {
+    try {
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(
+        {
+            message: 'Erro ao cadastrar agendamento', 
+            errorMessage: error.message
+        }
+      );
     }
   }
 }

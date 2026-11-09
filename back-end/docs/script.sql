@@ -1,6 +1,6 @@
-create database if not exists oficina_db;
+create database if not exists oficina_db_i2hs;
 
-use oficina_db;
+use oficina_db_i2hs;
 
 create table if not exists clientes(
 	id int auto_increment primary key not null,
