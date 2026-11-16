@@ -3,10 +3,16 @@ import ClienteController from "../controllers/ClienteControllers.js";
 import VeiculoController from "../controllers/VeiculoController.js";
 import AgendamentoController from "../controllers/AgendamentosControllers.js";
 import DashboardController from "../controllers/DashboardController.js";
+import authController from "../controllers/authController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-//router.use(authMiddleware);
+router.post('/login', (req, res) => authController.login(req, res))
+router.use(authMiddleware);
+//ROTAS PARA AUTH
+router.post('/logout', (req, res)=> authController.logout(req,res));
+router.post('/me', (req, res)=> authController.me(req,res));
 
 //Rotas para CLIENTES
 router.get('/clientes', (req, res) => ClienteController.listar(req, res));
