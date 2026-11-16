@@ -87,7 +87,34 @@ export class ClienteController{
             }
           );
         }
-      }
+    }
+    async deletarCliente(req,res) {
+        const {id} = req.params;
+
+        if(!id){
+            return res.status(400).json({error: "Cliente não encontrado"})
+        }
+        try {
+            const [result] = await pool.query(
+                `DELETE FROM clientes WHERE id = ?`,
+                [id]
+            )
+
+            if(result.affectedRows === 0){
+              return res.status(404).json({error: "Cliente não encontrado."})
+            };
+    
+            return res.json({message: "Cliente deletado com sucesso no DB"});
+        } catch (error) {
+            console.error(error);
+          res.status(500).json(
+            {
+                message: 'Erro ao deletar cliente', 
+                errorMessage: error.message
+            }
+          );
+        }
+    }
 }
 
 export default new ClienteController();
