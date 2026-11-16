@@ -6,15 +6,15 @@ class AgendamentoController {
     const { ordenarPor } = req.query;
 
     try {
-      let orderByClause = `ORDER BY DATE (a.data_agendamento) ASC, a.data_agendamento ASC;`;
+      let orderByClause = `ORDER BY DATE (a.data_horario) ASC, a.data_horario ASC;`;
 
       if (ordenarPor == "mes") {
-        let orderByClause = `ORDER BY MONTH (a.data_agendamento) ASC, a.data_agendamento ASC;`;
+        let orderByClause = `ORDER BY MONTH (a.data_horario) ASC, a.data_horario ASC;`;
       } else if (ordenarPor == "ano") {
-        let orderByClause = `ORDER BY YEAR (a.data_agendamento) ASC, a.data_agendamento ASC;`;
+        let orderByClause = `ORDER BY YEAR (a.data_horario) ASC, a.data_horario ASC;`;
       }
 
-      const sql = `select a.id, a.data_agendamento, a.descricao_servico, a.status, 
+      const sql = `select a.id, a.data_horario, a.descricao_servico, a.status, 
                         c.id as ID_CLIENTE, c.nome as NOME_CLIENTE, c.cpf as CPF_CLIENTE, 
                             c.telefone as TELEFONE_CLIENTE, c.email as EMAIL_CLIENTE,
                         v.id as ID_VEICULO, v.placa as PLACA_VEICULO, v.modelo as MODELO_VEICULO,
