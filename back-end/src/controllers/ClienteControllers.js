@@ -69,8 +69,8 @@ export class ClienteController{
 
           const [result] = await pool.query(
             `UPDATE clientes SET nome = ?, cpf = ?, telefone = ?, email = ? WHERE id = ?`,
-            [nome, cpf, telefone, email]
-          )
+            [nome, cpfCriptografado, telefone, email, id]
+        );
     
             if(result.affectedRows === 0){
               return res.status(404).json({error: "Cliente não encontrado."})

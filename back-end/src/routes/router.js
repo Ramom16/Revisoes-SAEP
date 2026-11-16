@@ -11,7 +11,7 @@ const router = Router();
 router.get('/clientes', (req, res) => ClienteController.listar(req, res));
 //router.get('/clientes/:id', (req, res) => ClienteController.buscarPorId(req, res));
 router.post('/clientes', (req, res) => ClienteController.criar(req, res));
-router.put('/clientes/:id', (req, res) => ClienteController.atualizar(req, res));
+router.put('/clientes/:id', (req, res) => ClienteController.editarCliente(req, res));
 //router.delete('/clientes/:id', (req, res) => ClienteController.deletar(req, res));
 
 // Rotas para Veículos
