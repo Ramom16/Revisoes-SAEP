@@ -55,9 +55,39 @@ export class ClienteController{
             )
         }
     }
-    async editar (req, res) {
-        
-    }
+    async editarCliente (req,res) {
+        const {id} =req.params;
+        const {nome, cpf, telefone, email} = req.body;
+    
+        if(!nome, !cpf, !telefone, !email){
+          return res.status(400).json({error: "Informe os campos necessários para atualizar cliente."})
+        }
+    
+        try {
+
+        const cpfCriptografado = cryptoService.encrypt(cpf);
+
+          const [result] = await pool.query(
+            `UPDATE clientes SET nome = ?, cpf = ?, telefone = ?, email = ? WHERE id = ?`,
+            [nome, cpf, telefone, email]
+          )
+    
+            if(result.affectedRows === 0){
+              return res.status(404).json({error: "Cliente não encontrado."})
+            };
+    
+            return res.json({message: "Cliente atualizado com sucesso no DB"});
+          
+        } catch (error) {
+          console.error(error);
+          res.status(500).json(
+            {
+                message: 'Erro ao editar cliente', 
+                errorMessage: error.message
+            }
+          );
+        }
+      }
 }
 
 export default new ClienteController();

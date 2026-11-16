@@ -43,7 +43,6 @@ class AgendamentoController {
         });
     }
   }
-
   async criar(req, res) {
     const {data_horario, descricao_servico, veiculo_id, status} = req.body;
 
@@ -66,6 +65,36 @@ class AgendamentoController {
       res.status(500).json(
         {
             message: 'Erro ao cadastrar agendamento', 
+            errorMessage: error.message
+        }
+      );
+    }
+  }
+  async editarData (req,res) {
+    const {id} =req.params;
+    const {nova_data} = req.body;
+
+    if(!nova_data){
+      return res.status(400).json({error: "Informe a nova data para atualização."})
+    }
+
+    try {
+      const [result] = await pool.query(
+        `UPDATE agendamentos SET data_horario = ? WHERE id = ?`,
+        [nova_data, id]
+      )
+
+        if(result.affectedRows === 0){
+          return res.status(404).json({error: "Agendamento não encontrado."})
+        };
+
+        return res.json({message: "Data do agendamento atualizada com sucesso no DB"});
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(
+        {
+            message: 'Erro ao salvar nova data no banco', 
             errorMessage: error.message
         }
       );
