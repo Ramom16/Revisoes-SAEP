@@ -42,7 +42,29 @@ export class VeiculoController {
                   }
               )
           }
-      }
+  }
+  async editar(req, res){
+    const {id} = req.params;
+    const {placa, modelo, marca, ano} = req.body;
+    try {
+      const [result] = await pool.query(
+        `UPDATE veiculos SET placa = ?, modelo = ?, marca = ?, ano = ?`,[placa, modelo, marca, ano],
+      )
+      if(result.affectedRows === 0){
+              return res.status(404).json({error: "Veiculo não encontrado."})
+            };
+    
+            return res.json({message: "Veiculo atualizado com sucesso no DB"});
+    } catch (error) {
+      console.error('Erro ao editar veiculo: ', error);
+              res.status(500).json(
+                  {
+                      error: 'Erro ao editar veiculo',
+                      errorMessage: error.message
+                  }
+              )
+    }
+  }
 }
 
 export default new VeiculoController();

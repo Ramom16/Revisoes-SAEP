@@ -2,6 +2,7 @@ import { Router } from "express";
 import ClienteController from "../controllers/ClienteControllers.js";
 import VeiculoController from "../controllers/VeiculoController.js";
 import AgendamentoController from "../controllers/AgendamentosControllers.js";
+import DashboardController from "../controllers/DashboardController.js";
 
 const router = Router();
 
@@ -17,10 +18,14 @@ router.delete('/clientes/:id', (req, res) => ClienteController.deletarCliente(re
 // Rotas para Veículos
 router.get('/veiculos', (req, res) => VeiculoController.listar(req,res));
 router.post('/veiculos', (req, res) => VeiculoController.criar(req, res));
+router.put('/veiculos/:id', (req, res)=> VeiculoController.editar(req, res));
 
 // Rotas para agendamentos
 router.get('/agendamentos', (req, res) => AgendamentoController.listar(req, res));
 router.post('/agendamentos/criar', (req, res) => AgendamentoController.criar(req, res));
 router.patch('/agendamento/:id/editar', (req, res) => AgendamentoController.editarData(req, res));
+
+// ROTAS PARA DASHBOARD
+router.get('/dashboard/resumo', (req, res)=> DashboardController.resumo(req, res));
 
 export default router; 
