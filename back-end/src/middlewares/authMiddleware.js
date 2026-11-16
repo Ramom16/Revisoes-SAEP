@@ -8,7 +8,7 @@ function authMiddleware(req, res, next){
 
     const authHeader = req.headers.authorization;
     //Bearer <token>
-    const token = authHeader && authHeader.split('')[1];
+    const token = authHeader && authHeader.split(' ')[1];
 
     if(!token || tokensInvalidos.has(token)){
         return res.status(401).json({

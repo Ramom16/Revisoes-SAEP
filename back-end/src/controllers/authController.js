@@ -58,7 +58,7 @@ async function login(req, res) {
 }
 async function logout(req, res) {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split('')[1];
+    const token = authHeader && authHeader.split(' ')[1];
 
     if(token){
         tokensInvalidos.add(token);
